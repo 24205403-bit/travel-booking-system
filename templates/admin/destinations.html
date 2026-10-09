@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Destinations - Admin{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 class="section-title">Manage Destinations</h1>
+            <p class="section-subtitle">Add, edit, or remove travel packages</p>
+        </div>
+        <a href="{{ url_for('admin.add_destination') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add New Destination
+        </a>
+    </div>
+
+    <div class="card" style="padding: 1.75rem;">
+        {% if destinations %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+                            <th style="padding: 0.75rem;">Image</th>
+                            <th style="padding: 0.75rem;">Title</th>
+                            <th style="padding: 0.75rem;">Location</th>
+                            <th style="padding: 0.75rem;">Category</th>
+                            <th style="padding: 0.75rem;">Price</th>
+                            <th style="padding: 0.75rem;">Rating</th>
+                            <th style="padding: 0.75rem;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in destinations %}
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem;">
+                                    <img src="{{ d.image_url }}" alt="{{ d.title }}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;" onerror="this.src='/static/images/ooty.jpg'">
+                                </td>
+                                <td style="padding: 0.75rem; font-weight: 700;">{{ d.title }}</td>
+                                <td style="padding: 0.75rem;">{{ d.location }}</td>
+                                <td style="padding: 0.75rem;"><span class="card-badge" style="position: static;">{{ d.category }}</span></td>
+                                <td style="padding: 0.75rem; font-weight: 700; color: var(--primary);">₹{{ "{:,.0f}".format(d.price) }}</td>
+                                <td style="padding: 0.75rem;">⭐ {{ d.rating }}</td>
+                                <td style="padding: 0.75rem;">
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="{{ url_for('admin.edit_destination', dest_id=d['_id']) }}" class="btn btn-outline btn-sm">Edit</a>
+                                        <form action="{{ url_for('admin.delete_destination', dest_id=d['_id']) }}" method="POST" onsubmit="return confirm('Delete {{ d.title }}?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="color: var(--text-muted);">No destinations found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

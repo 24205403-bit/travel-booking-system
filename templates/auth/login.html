@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 480px; margin-top: 3rem; margin-bottom: 4rem;">
+    <div class="card" style="padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+            <h2>Welcome Back</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Sign in to your TravelExplorer account</p>
+        </div>
+
+        <form action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="user@travel.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
+                <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-color); text-align: center; font-size: 0.88rem; color: var(--text-muted);">
+            Demo Accounts for Testing:<br>
+            <strong>User:</strong> user@travel.com / userpassword123<br>
+            <strong>Admin:</strong> admin@travel.com / adminpassword123
+        </div>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem;">
+            Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--primary); font-weight: 600;">Register Here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

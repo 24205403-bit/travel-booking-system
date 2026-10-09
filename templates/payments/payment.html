@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout Payment - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 600px;">
+    <div class="card" style="padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 60px; height: 60px; background: #dcfce7; color: #15803d; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2>Secure Payment Gateway</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Complete payment for booking ref: <strong>{{ booking.booking_ref }}</strong></p>
+        </div>
+
+        <!-- Order Summary -->
+        <div style="background: var(--light-bg); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+            <h4 style="margin-bottom: 0.75rem;">Summary</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.95rem;">
+                <span>Package:</span>
+                <strong>{{ destination.title }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.95rem;">
+                <span>Travel Date:</span>
+                <span>{{ booking.travel_date }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.95rem;">
+                <span>Travelers:</span>
+                <span>{{ booking.guests }} Guest(s)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 800; color: var(--primary); padding-top: 0.75rem; border-top: 1px solid var(--border-color); margin-top: 0.5rem;">
+                <span>Total Amount Due:</span>
+                <span>₹{{ "{:,.0f}".format(booking.total_price) }}</span>
+            </div>
+        </div>
+
+        {% if existing_payment %}
+            <div class="alert alert-success">
+                <span>Payment already completed for this booking!</span>
+            </div>
+            <a href="{{ url_for('booking.booking_details', booking_id=booking['_id']) }}" class="btn btn-primary" style="width: 100%;">View Booking Voucher</a>
+        {% else %}
+            <form action="{{ url_for('payment.checkout', booking_id=booking['_id']) }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Select Payment Method</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; background: #fff;">
+                            <input type="radio" name="payment_method" value="Credit / Debit Card" checked>
+                            <i class="fa-solid fa-credit-card" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 600;">Credit / Debit Card</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; background: #fff;">
+                            <input type="radio" name="payment_method" value="UPI / Google Pay / PhonePe">
+                            <i class="fa-solid fa-mobile-screen" style="color: var(--secondary); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 600;">UPI (Google Pay / PhonePe / Paytm)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; background: #fff;">
+                            <input type="radio" name="payment_method" value="Net Banking">
+                            <i class="fa-solid fa-building-columns" style="color: var(--warning); font-size: 1.2rem;"></i>
+                            <span style="font-weight: 600;">Net Banking</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem; margin-top: 1.5rem;">
+                    <i class="fa-solid fa-shield-halved"></i> Pay ₹{{ "{:,.0f}".format(booking.total_price) }} Securely
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

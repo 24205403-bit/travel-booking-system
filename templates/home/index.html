@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}TravelExplorer - Book Ooty, Kodaikanal, Goa & Munnar Tours{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Explore the World's Most Stunning Destinations</h1>
+        <p class="hero-subtitle">Plan your next retreat to breathtaking hill stations, tropical beaches, and scenic tea plantations.</p>
+
+        <!-- Search Box Form -->
+        <form action="{{ url_for('destination.list_destinations') }}" method="GET" class="search-box">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); margin-left: 0.5rem;"></i>
+            <input type="text" name="search" placeholder="Where do you want to go? (e.g. Ooty, Goa, Munnar)">
+            <select name="category">
+                <option value="all">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">
+                Explore Now
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- Featured Destinations Section -->
+<div class="main-container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+            <h2 class="section-title">Featured Destinations</h2>
+            <p class="section-subtitle">Handpicked top-rated holiday packages for you</p>
+        </div>
+        <a href="{{ url_for('destination.list_destinations') }}" class="btn btn-outline">
+            View All <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="cards-grid">
+        {% for dest in featured %}
+            <div class="card">
+                <div class="card-img-wrap">
+                    <img src="{{ dest.image_url }}" alt="{{ dest.title }}" class="card-img" onerror="this.src='/static/images/ooty.jpg'">
+                    <span class="card-badge">{{ dest.category }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="rating-badge" style="margin-bottom: 0.5rem; width: fit-content;">
+                        <i class="fa-solid fa-star"></i> {{ dest.rating }}
+                    </div>
+                    <h3 class="card-title">{{ dest.title }}</h3>
+                    <p class="card-location">
+                        <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ dest.location }}
+                    </p>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; flex: 1;">
+                        {{ dest.description[:95] }}...
+                    </p>
+                    <div class="card-footer">
+                        <div>
+                            <span class="price-sub">Starting from</span>
+                            <div class="price-tag">₹{{ "{:,.0f}".format(dest.price) }}</div>
+                        </div>
+                        <a href="{{ url_for('destination.details', dest_id=dest['_id']) }}" class="btn btn-primary btn-sm">
+                            Book Package
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Why Choose Us Section -->
+<section style="background: #ffffff; padding: 4rem 2rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); margin-top: 4rem;">
+    <div class="main-container" style="margin: 0 auto;">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 3rem;">
+            <h2 class="section-title">Why Travel With Us?</h2>
+            <p class="section-subtitle">We deliver seamless, memorable travel experiences backed by local experts.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; text-align: center;">
+            <div style="padding: 1.5rem; background: var(--light-bg); border-radius: var(--radius-md);">
+                <div style="width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3>Verified Resorts</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Only top-rated 4 & 5-star accommodations with guaranteed comfort.</p>
+            </div>
+
+            <div style="padding: 1.5rem; background: var(--light-bg); border-radius: var(--radius-md);">
+                <div style="width: 60px; height: 60px; background: #e0f2fe; color: var(--secondary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Dedicated travel assistant on standby throughout your tour.</p>
+            </div>
+
+            <div style="padding: 1.5rem; background: var(--light-bg); border-radius: var(--radius-md);">
+                <div style="width: 60px; height: 60px; background: #fef3c7; color: var(--warning); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-tags"></i>
+                </div>
+                <h3>Best Price Guarantee</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Transparent pricing with zero hidden charges or booking fees.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

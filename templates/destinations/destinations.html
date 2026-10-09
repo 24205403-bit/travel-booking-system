@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}All Destinations - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">Explore Travel Packages</h1>
+        <p class="section-subtitle">Discover amazing hill stations, beach stays, and luxury holiday packages</p>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div style="background: #ffffff; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <form action="{{ url_for('destination.list_destinations') }}" method="GET" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+            <div style="flex: 2; min-width: 240px;">
+                <input type="text" name="search" class="form-control" placeholder="Search by location or name..." value="{{ search_query }}">
+            </div>
+
+            <div style="flex: 1; min-width: 180px;">
+                <select name="category" class="form-control">
+                    <option value="all">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 180px;">
+                <select name="sort" class="form-control">
+                    <option value="">Sort By: Default</option>
+                    <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Highest Rated</option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-filter"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Destinations Grid -->
+    {% if destinations %}
+        <div class="cards-grid">
+            {% for dest in destinations %}
+                <div class="card">
+                    <div class="card-img-wrap">
+                        <img src="{{ dest.image_url }}" alt="{{ dest.title }}" class="card-img" onerror="this.src='/static/images/ooty.jpg'">
+                        <span class="card-badge">{{ dest.category }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">
+                                <i class="fa-solid fa-clock"></i> {{ dest.duration }}
+                            </span>
+                            <div class="rating-badge">
+                                <i class="fa-solid fa-star"></i> {{ dest.rating }}
+                            </div>
+                        </div>
+
+                        <h3 class="card-title">{{ dest.title }}</h3>
+                        <p class="card-location">
+                            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ dest.location }}
+                        </p>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; flex: 1;">
+                            {{ dest.description[:90] }}...
+                        </p>
+
+                        <div class="card-footer">
+                            <div>
+                                <span class="price-sub">Price per person</span>
+                                <div class="price-tag">₹{{ "{:,.0f}".format(dest.price) }}</div>
+                            </div>
+                            <a href="{{ url_for('destination.details', dest_id=dest['_id']) }}" class="btn btn-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 2rem; background: #fff; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <i class="fa-solid fa-compass-slash" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No Destinations Found</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Try adjusting your search criteria or category filter.</p>
+            <a href="{{ url_for('destination.list_destinations') }}" class="btn btn-outline">Reset Search</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

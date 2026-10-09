@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Destination - Admin{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 700px;">
+    <div class="card" style="padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <h2 style="margin-bottom: 1.5rem;">Add New Destination Package</h2>
+
+        <form action="{{ url_for('admin.add_destination') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label" for="title">Title / Package Name</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Queen of Hill Stations - Ooty" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label" for="location">Location / State</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Nilgiris, Tamil Nadu" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="category">Category</label>
+                    <select id="category" name="category" class="form-control">
+                        <option value="Hill Station">Hill Station</option>
+                        <option value="Beach">Beach</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Cultural">Cultural</option>
+                        <option value="Adventure">Adventure</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label" for="price">Price (₹ per person)</label>
+                    <input type="number" id="price" name="price" class="form-control" placeholder="12500" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="duration">Duration</label>
+                    <input type="text" id="duration" name="duration" class="form-control" placeholder="3 Days / 2 Nights" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="image_url">Image URL or Path</label>
+                <input type="text" id="image_url" name="image_url" class="form-control" placeholder="/static/images/ooty.jpg">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="description">Detailed Description</label>
+                <textarea id="description" name="description" class="form-control" rows="4" placeholder="Overview of the tour package..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="highlights">Tour Highlights (Comma separated)</label>
+                <input type="text" id="highlights" name="highlights" class="form-control" placeholder="Toy Train Ride, Botanical Gardens, Lake Boating">
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <a href="{{ url_for('admin.list_destinations') }}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Save Destination</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

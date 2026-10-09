@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{ destination.title }} - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 650px;">
+    <div class="card" style="padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <h2 style="margin-bottom: 0.5rem;">Complete Your Booking</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Destination: <strong>{{ destination.title }}</strong></p>
+
+        <form action="{{ url_for('booking.create_booking', dest_id=destination['_id']) }}" method="POST">
+            <div class="form-group">
+                <label class="form-label" for="travel_date">Travel Start Date</label>
+                <input type="date" id="travel_date" name="travel_date" class="form-control" required min="{{ current_date or '2026-10-08' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="guests">Number of Guests / Travelers</label>
+                <input type="number" id="guests" name="guests" class="form-control" value="1" min="1" max="20" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="special_requests">Special Requests (Optional)</label>
+                <textarea id="special_requests" name="special_requests" class="form-control" rows="3" placeholder="e.g. Dietary preferences, honeymoon room, airport pick-up..."></textarea>
+            </div>
+
+            <!-- Price Breakdown Summary -->
+            <div style="background: var(--light-bg); padding: 1.25rem; border-radius: var(--radius-md); margin-top: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border-color);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+                    <span>Price per Person:</span>
+                    <strong id="price-per-person" data-price="{{ destination.price }}">₹{{ "{:,.0f}".format(destination.price) }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; color: var(--primary); padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                    <span>Total Price:</span>
+                    <span id="total-price-display">₹{{ "{:,.0f}".format(destination.price) }}</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">
+                <i class="fa-solid fa-credit-card"></i> Proceed to Payment Checkout
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

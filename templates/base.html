@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TravelExplorer - Discover Amazing Destinations{% endblock %}</title>
+    <meta name="description" content="Book amazing travel packages for Ooty, Kodaikanal, Goa, Munnar and top destinations.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">
+                <i class="fa-solid fa-compass" style="color: var(--primary); font-size: 1.8rem;"></i>
+                <span>Travel<span style="color: var(--primary);">Explorer</span></span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('main.index') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('destination.list_destinations') }}" class="nav-link">Destinations</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="{{ url_for('booking.my_bookings') }}" class="nav-link">My Bookings</a></li>
+                    {% if session.get('user_role') == 'admin' %}
+                        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link" style="color: var(--accent); font-weight: 700;">Admin Dashboard</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <div class="nav-actions">
+                {% if session.get('user_id') %}
+                    <div class="user-menu">
+                        <div class="user-avatar">{{ session.get('user_name', 'U')[0] | upper }}</div>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: var(--dark);">{{ session.get('user_name') }}</span>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages Container -->
+    <div style="max-width: 1280px; margin: 1.5rem auto 0; padding: 0 1.5rem;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span>{{ message }}</span>
+                        <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="this.parentElement.remove()"></i>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Body Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">
+                    <i class="fa-solid fa-compass" style="color: var(--secondary);"></i> TravelExplorer
+                </div>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">Your ultimate partner for booking unforgettable holidays, hill station retreats, and beach adventures.</p>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 1rem;">Quick Links</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                    <li><a href="{{ url_for('main.index') }}" style="color: #94a3b8;">Home</a></li>
+                    <li><a href="{{ url_for('destination.list_destinations') }}" style="color: #94a3b8;">Top Destinations</a></li>
+                    <li><a href="{{ url_for('destination.list_destinations', category='Hill Station') }}" style="color: #94a3b8;">Hill Stations</a></li>
+                    <li><a href="{{ url_for('destination.list_destinations', category='Beach') }}" style="color: #94a3b8;">Beach Holidays</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 1rem;">Popular Tours</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                    <li>Ooty Queen of Hills</li>
+                    <li>Kodaikanal Lake Special</li>
+                    <li>Goa Beach Cruise</li>
+                    <li>Munnar Tea Estates</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelExplorer. All rights reserved. Powered by Flask &amp; MongoDB.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

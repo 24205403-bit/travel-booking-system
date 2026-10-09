@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Package Types - Admin{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 class="section-title">Package Types</h1>
+            <p class="section-subtitle">Manage travel package categories used across your destinations</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Dashboard
+            </a>
+            <a href="{{ url_for('admin.add_package_type') }}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Add New Type
+            </a>
+        </div>
+    </div>
+
+    <!-- Package Type Cards Grid -->
+    {% if package_types %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+            {% for pt in package_types %}
+                <div class="card" style="padding: 1.75rem; position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease;"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.12)'"
+                     onmouseout="this.style.transform='none'; this.style.boxShadow=''">
+                    <!-- Color accent bar -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: {{ pt.color }};"></div>
+
+                    <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                        <!-- Icon circle -->
+                        <div style="width: 52px; height: 52px; border-radius: 14px; background: {{ pt.color }}15; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid {{ pt.icon }}" style="font-size: 1.3rem; color: {{ pt.color }};"></i>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.15rem; font-weight: 700;">{{ pt.name }}</h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">{{ pt.description or 'No description' }}</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                                <i class="fa-solid fa-map-location-dot"></i> {{ pt.dest_count }} Destination{{ 's' if pt.dest_count != 1 else '' }}
+                            </span>
+                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: {{ pt.color }}; margin-left: 0.5rem;" title="Color: {{ pt.color }}"></span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{{ url_for('admin.edit_package_type', type_id=pt['_id']) }}" class="btn btn-outline btn-sm">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <form action="{{ url_for('admin.delete_package_type', type_id=pt['_id']) }}" method="POST" onsubmit="return confirm('Delete package type \'{{ pt.name }}\'? Destinations using this category will keep their current category label.');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card" style="padding: 3rem; text-align: center;">
+            <i class="fa-solid fa-tags" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3 style="color: var(--text-muted);">No Package Types Yet</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Create your first package type to categorize destinations.</p>
+            <a href="{{ url_for('admin.add_package_type') }}" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Package Type
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

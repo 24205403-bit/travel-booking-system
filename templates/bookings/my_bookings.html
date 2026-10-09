@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div style="margin-bottom: 2rem;">
+        <h1 class="section-title">My Travel Bookings</h1>
+        <p class="section-subtitle">Manage your booked trips, check payment statuses, and view itineraries</p>
+    </div>
+
+    {% if bookings %}
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% for b in bookings %}
+                <div class="card" style="padding: 1.5rem; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem; flex: 2; min-width: 280px;">
+                        <img src="{{ b.destination.image_url }}" alt="{{ b.destination.title }}" style="width: 120px; height: 90px; object-fit: cover; border-radius: var(--radius-sm);" onerror="this.src='/static/images/ooty.jpg'">
+                        <div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Ref: {{ b.booking_ref }}</span>
+                            <h3 style="font-size: 1.25rem; margin-top: 0.2rem; margin-bottom: 0.3rem;">{{ b.destination.title }}</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-calendar"></i> Travel Date: {{ b.travel_date }} &nbsp;&bull;&nbsp;
+                                <i class="fa-solid fa-users"></i> {{ b.guests }} Guest(s)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; min-width: 160px;">
+                        <div class="price-tag" style="font-size: 1.3rem;">₹{{ "{:,.0f}".format(b.total_price) }}</div>
+                        <div style="margin-top: 0.4rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <span class="status-badge status-{{ b.status | lower }}">{{ b.status }}</span>
+                            <span class="status-badge status-{{ b.payment_status | lower }}">{{ b.payment_status }}</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                        {% if b.payment_status == 'Unpaid' and b.status != 'Cancelled' %}
+                            <a href="{{ url_for('payment.checkout', booking_id=b['_id']) }}" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-credit-card"></i> Pay Now
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('booking.booking_details', booking_id=b['_id']) }}" class="btn btn-outline btn-sm">
+                            View Itinerary
+                        </a>
+                        {% if b.status != 'Cancelled' %}
+                            <form action="{{ url_for('booking.cancel_booking', booking_id=b['_id']) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 2rem; background: #fff; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <i class="fa-solid fa-suitcase-rolling" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No Bookings Yet</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You haven't booked any trips yet. Discover our top destinations today!</p>
+            <a href="{{ url_for('destination.list_destinations') }}" class="btn btn-primary">Browse Destinations</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

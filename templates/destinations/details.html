@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ destination.title }} - TravelExplorer{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Breadcrumb -->
+    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        <a href="{{ url_for('main.index') }}">Home</a> &nbsp;/&nbsp;
+        <a href="{{ url_for('destination.list_destinations') }}">Destinations</a> &nbsp;/&nbsp;
+        <span style="color: var(--dark); font-weight: 600;">{{ destination.title }}</span>
+    </div>
+
+    <!-- Main Detail Grid -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem;">
+        
+        <!-- Left Content Column -->
+        <div>
+            <!-- Banner Image -->
+            <div style="height: 380px; border-radius: var(--radius-lg); overflow: hidden; position: relative; margin-bottom: 2rem; box-shadow: var(--shadow-md);">
+                <img src="{{ destination.image_url }}" alt="{{ destination.title }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/static/images/ooty.jpg'">
+                <span class="card-badge" style="top: 1.5rem; right: 1.5rem; font-size: 0.9rem; padding: 0.4rem 1rem;">
+                    {{ destination.category }}
+                </span>
+            </div>
+
+            <!-- Title & Rating header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                <div>
+                    <h1 style="font-size: 2.2rem; margin-bottom: 0.4rem;">{{ destination.title }}</h1>
+                    <p style="color: var(--text-muted); font-size: 1rem;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ destination.location }}
+                        &nbsp;&bull;&nbsp;
+                        <i class="fa-solid fa-clock" style="color: var(--secondary);"></i> {{ destination.duration }}
+                    </p>
+                </div>
+                <div class="rating-badge" style="font-size: 1.1rem; padding: 0.4rem 0.8rem;">
+                    <i class="fa-solid fa-star"></i> {{ destination.rating }} / 5.0
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div style="background: #fff; padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 0.75rem;">About This Destination</h3>
+                <p style="color: var(--text-primary); line-height: 1.8;">{{ destination.description }}</p>
+            </div>
+
+            <!-- Key Highlights -->
+            {% if destination.highlights %}
+                <div style="background: #fff; padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Tour Highlights</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        {% for item in destination.highlights %}
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.1rem;"></i>
+                                <span>{{ item }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Customer Reviews Section -->
+            <div style="background: #fff; padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>User Reviews ({{ reviews | length }})</span>
+                </h3>
+
+                {% if reviews %}
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem;">
+                        {% for rev in reviews %}
+                            <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                                    <strong style="color: var(--dark);">{{ rev.user_name }}</strong>
+                                    <div style="color: #f59e0b; font-size: 0.85rem;">
+                                        {% for i in range(rev.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                                    </div>
+                                </div>
+                                <p style="color: var(--text-muted); font-size: 0.92rem;">"{{ rev.comment }}"</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">No reviews yet. Be the first traveler to review!</p>
+                {% endif %}
+
+                <!-- Add Review Form -->
+                {% if session.get('user_id') %}
+                    <form action="{{ url_for('review.add_review', dest_id=destination['_id']) }}" method="POST" style="background: var(--light-bg); padding: 1.25rem; border-radius: var(--radius-sm);">
+                        <h4 style="margin-bottom: 0.75rem;">Leave a Review</h4>
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <label class="form-label">Your Rating</label>
+                            <div id="star-rating-select" style="font-size: 1.5rem; color: #f59e0b; cursor: pointer; display: flex; gap: 0.3rem;">
+                                <span data-value="1"><i class="fa-solid fa-star"></i></span>
+                                <span data-value="2"><i class="fa-solid fa-star"></i></span>
+                                <span data-value="3"><i class="fa-solid fa-star"></i></span>
+                                <span data-value="4"><i class="fa-solid fa-star"></i></span>
+                                <span data-value="5"><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <input type="hidden" name="rating" id="rating-value-input" value="5">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience about this destination..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                    </form>
+                {% else %}
+                    <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+                        <a href="{{ url_for('auth.login') }}" style="color: var(--primary); font-weight: 600;">Log in</a> to write a review.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Booking Action Card) -->
+        <div>
+            <div class="card" style="padding: 1.75rem; position: sticky; top: 90px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                <span class="price-sub">Package Price</span>
+                <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div class="price-tag" style="font-size: 2.2rem;">₹{{ "{:,.0f}".format(destination.price) }}</div>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">/ person</span>
+                </div>
+
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; font-size: 0.9rem; color: var(--text-primary);">
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Instant Confirmation</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Free Cancellation (48h prior)</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Dedicated Tour Guide</li>
+                </ul>
+
+                <a href="{{ url_for('booking.create_booking', dest_id=destination['_id']) }}" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">
+                    <i class="fa-solid fa-calendar-check"></i> Book Package Now
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
